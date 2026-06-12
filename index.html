@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compartir ubicación</title>
+</head>
+<body>
+
+    <h2>Compartir ubicación</h2>
+
+    <button onclick="enviarUbicacion()">
+        Compartir ubicación
+    </button>
+
+    <p id="estado"></p>
+
+    <script>
+
+    function enviarUbicacion() {
+
+        const estado = document.getElementById("estado");
+
+        if (!navigator.geolocation) {
+            estado.innerHTML = "Tu navegador no soporta geolocalización.";
+            return;
+        }
+
+        estado.innerHTML = "Obteniendo ubicación...";
+
+        navigator.geolocation.getCurrentPosition(
+
+            function(pos) {
+
+                fetch("https://script.google.com/macros/s/AKfycbyWbT_EVQz0CMMKnVxVF0B6wMp4L-6buEsEblvFy6ihYgDe27tXlbIwqSQmaRaMG9t3vQ/exec", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        latitud: pos.coords.latitude,
+                        longitud: pos.coords.longitude
+                    })
+                })
+
+                .then(() => {
+                    estado.innerHTML = "Ubicación enviada correctamente.";
+                })
+
+                .catch(() => {
+                    estado.innerHTML = "Error al enviar la ubicación.";
+                });
+
+            },
+
+            function(error) {
+                estado.innerHTML = "No se concedió permiso de ubicación.";
+            }
+
+        );
+    }
+
+    </script>
+
+</body>
+</html>
