@@ -32,22 +32,24 @@
 
             function(pos) {
 
-                fetch("https://script.google.com/macros/s/AKfycbyWbT_EVQz0CMMKnVxVF0B6wMp4L-6buEsEblvFy6ihYgDe27tXlbIwqSQmaRaMG9t3vQ/exec", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        latitud: pos.coords.latitude,
-                        longitud: pos.coords.longitude
-                    })
-                })
+                const datos = new URLSearchParams();
+                datos.append("latitud", pos.coords.latitude);
+                datos.append("longitud", pos.coords.longitude);
 
-                .then(() => {
+                fetch(
+                    "https://script.google.com/macros/s/AKfycbyWbT_EVQz0CMMKnVxVF0B6wMp4L-6buEsEblvFy6ihYgDe27tXlbIwqSQmaRaMG9t3vQ/exec",
+                    {
+                        method: "POST",
+                        body: datos
+                    }
+                )
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
                     estado.innerHTML = "Ubicación enviada correctamente.";
                 })
-
-                .catch(() => {
+                .catch(error => {
+                    console.error(error);
                     estado.innerHTML = "Error al enviar la ubicación.";
                 });
 
